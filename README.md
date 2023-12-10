@@ -1,1 +1,1 @@
-# django-framework-store
+# django-rest-framework-store
