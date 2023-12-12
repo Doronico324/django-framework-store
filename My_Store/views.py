@@ -163,8 +163,9 @@ def user_cart_items(request, user_id):
 # **********************************
 
 def get_username_by_id(request, user_id):
-    try:
+    try: 
         user = CustomUser.objects.get(pk=user_id)
+        print(user)
         username = user.username
         return JsonResponse({'username': username})
     except CustomUser.DoesNotExist:
