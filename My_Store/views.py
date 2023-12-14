@@ -8,9 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 
 
-# ****************
-# **welcome_page**
-# ****************
+# welcome_page
 
 @api_view(['GET'])
 def welcome_page(request):
@@ -33,9 +31,6 @@ def welcome_page(request):
     }
     return Response(api_endpoints)
 
-# **************************
-# **get products to navbar**
-# **************************
 
 @api_view(['GET', 'POST'])
 def products(request):
@@ -66,9 +61,7 @@ def products(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-# ******************
-# **get categories**
-# ******************
+
 
 def get_unique_categories(request):
     if request.method == 'GET':
@@ -76,10 +69,6 @@ def get_unique_categories(request):
         unique_categories = list(categories)
         return JsonResponse(unique_categories, safe=False, status=status.HTTP_200_OK)
 
-
-# *************************
-# **action on product get**
-# *************************
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
@@ -105,9 +94,6 @@ def product_detail(request, id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-# ******************************************************************************
-
 @api_view(['GET', 'POST'])
 def orders(request):
     if request.method == 'GET':
@@ -122,9 +108,6 @@ def orders(request):
             return Response(order_serializer.data, status=status.HTTP_201_CREATED)
         return Response(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# ***************************
-# **show all the cart items**
-# ***************************
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -141,9 +124,6 @@ def cart_items(request):
             return Response(cart_item_serializer.data, status=status.HTTP_201_CREATED)
         return Response(cart_item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# ******************************************************
-# **show all the cart items per user and order is null**
-# ******************************************************
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -158,10 +138,6 @@ def user_cart_items(request, user_id):
         return Response(cart_items_serializer.data)
 
 
-# **********************************
-# **get id and return name of user**
-# **********************************
-
 def get_username_by_id(request, user_id):
     try: 
         user = CustomUser.objects.get(pk=user_id)
@@ -171,11 +147,6 @@ def get_username_by_id(request, user_id):
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
     
-
-
-# **********************************************
-# **register user - get data and register user**
-# **********************************************
 
 @api_view(['POST'])
 def user_registration(request):
@@ -189,10 +160,6 @@ def user_registration(request):
         return Response("Method not allowed", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-# **************************************
-# **delte product in cart item of user**
-# **************************************
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_cart_item(request, user_id, product_id):
@@ -204,29 +171,25 @@ def delete_cart_item(request, user_id, product_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-# *************************
-# **checkout of cart item**
-# *************************
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  
 def checkout_view(request):
     if request.method == 'POST':
         cart_items_data = request.data.get('cartItems', [])
-        user_id = request.data.get('userId')  # Get the user ID from the request payload
+        user_id = request.data.get('userId')  
 
         # Ensure the user_id is valid and exists
         if not CustomUser.objects.filter(id=user_id).exists():
             return Response({'error': 'Invalid user ID'}, status=status.HTTP_400_BAD_REQUEST)
 
-        order = Order.objects.create(user_id=user_id)  # Create an order for the user
+        order = Order.objects.create(user_id=user_id) 
 
         for item_data in cart_items_data:
             product_id = item_data.get('product')
             quantity = item_data.get('quantity')
 
             cart_item = CartItem.objects.create(
-                user_id=user_id,  # Link the cart item to the provided user ID
+                user_id=user_id,  
                 product_id=product_id,
                 quantity=quantity,
                 order=order
@@ -236,9 +199,6 @@ def checkout_view(request):
 
     return Response({'error': 'Invalid request.'}, status=status.HTTP_400_BAD_REQUEST)
 
-# *****************************************
-# **delte the cart items on specific user**
-# *****************************************
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  
@@ -257,10 +217,6 @@ def clear_cart(request, user_id):
 
     return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-# ******************
-# **orders by user**
-# ******************
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  
