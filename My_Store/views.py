@@ -27,7 +27,6 @@ def welcome_page(request):
             "checkout": "/checkout/", 
             "orders": "/orders/"     
         },
-        "additional_info": "Replace <id> with the respective ID in the URL."
     }
     return Response(api_endpoints)
 
